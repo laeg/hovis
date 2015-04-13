@@ -1,0 +1,15 @@
+#mainBody{
+	height: 573px;
+}
+
+.main{
+	padding-left: 100px;
+	padding-right: 100px;
+	height: inherit;
+	width: inherit;
+}
+
+snap-content {
+  background-color: #FFF;
+  border-right: 1px solid #000;
+}

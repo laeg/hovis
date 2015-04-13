@@ -1,0 +1,75 @@
+<link rel="stylesheet" href="styles/test.css">
+
+<!-- Right sidebar -->
+<div snap-drawer="right">
+	<div class="panel">
+		<div class="panel-heading">
+			<h4>Attributes</h4>
+		</div>
+	</div>
+</div>
+<!-- END Right sidebar -->
+
+<snap-content snap-options="snapOpts">
+	<!-- Header
+	<div class="navbar" ng-include="'views/navbar.html'"></div> -->
+	<!-- END Header -->
+
+	<div class="main">
+
+		<!-- Search Bar -->
+		<div class="row">
+
+			<!-- /.col-lg-6 -->
+			<div class="input-group">
+				<div class="input-group-btn">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="glyphicon glyphicon-tags"></span> Type
+				</button>
+				<ul class="dropdown-menu dropdown-menu-right" role="menu">
+					<li><a href="#">All</a>
+					</li>
+					<li class="divider"></li>
+					<li><a href="#">People</a>
+					</li>
+					<li class="divider"></li>
+					<li><a href="#">Object</a>
+					</li>
+					<li class="divider"></li>
+					<li><a href="#">Location</a>
+					</li>
+					<li class="divider"></li>
+					<li><a href="#">Event</a>
+					</li>
+				</ul>
+			</div> 
+				<!-- /btn-group -->
+				<input type="text" class="form-control" aria-label="...">
+				<div class="input-group-btn">
+					<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="glyphicon glyphicon-search"></span>
+					</button>
+					<ul class="dropdown-menu dropdown-menu-right" role="menu">
+						<li><a href="#">Search Network</a>
+							<li class="divider"></li>
+							<li><a href="#">Search Database</a>
+							</li>
+					</ul>
+				</div>
+				<!-- /btn-group -->
+			</div>
+			<!-- /input-group -->
+		</div>
+		<!-- /.row -->
+		<!-- END Search Bar -->
+
+		<!-- KeyLines Chart -->
+		<div id='chartId' kl-base-path='../' kl-selected='selected' kl-chart='chart' kl-options='options'>
+		</div>
+		<!-- END KeyLines Chart -->
+
+		
+	</div>
+
+	<!-- Footer 
+	<div class="footer" ng-include="'views/footer.html'"></div>-->
+	<!-- END Footer -->
+</snap-content>
