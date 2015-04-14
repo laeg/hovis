@@ -1,19 +1,28 @@
 'use strict';
 
 angular.module('graphAngularApp')
-  .controller('TestCtrl', function ($scope) {
-		
+	.controller('KeylinesCtrl', function ($scope, neoFactory) {
 
-		/***********************************
-		 **		Slide Menu
+		var searchType = '';
+		var queryChoice = '';
+
+		$scope.setVariables = function (id) {
+			searchType = id;
+			queryChoice = 'start';
+			console.log(searchType);
+			console.log(queryChoice);
+		}
+
+		/************************************
+		 **		   Slide Menu Config	   **
 		 ************************************/
 		$scope.snapOpts = {
 			disable: 'left'
 		};
 
 
-		/***********************************
-		 **		KeyLines Config
+		/************************************
+		 **		KeyLines Directive Config  **
 		 ************************************/
 		// all keylines events are prefixed with kl and be captured like so:
 		$scope.$on('kl', function (event, eventName, componentId, componentType) {
@@ -59,6 +68,34 @@ angular.module('graphAngularApp')
 			controlColour: 'grey',
 			selectionColour: '#44D'
 		};
+
+
+		/************************************
+		 **		KeyLines Render Nodes	   **
+		 ************************************/
+		$scope.renderNode = function () {
+			var watchingSearch = $scope.$watch('neoID', function (id) {
+				// Need some real handling!!
+				if (id !== 'undefined' && id !== null && id !== '') {
+					console.log('YO' + id);
+					watchingSearch();
+
+					neoFactory.callCypher(queryChoice, id)
+						.success(function (json) {
+								console.log(parseResult(json));
+						})
+						.error(function (xhr) {
+							console.log(xhr);
+						})
+				}
+			});
+
+		};
+
+
+		/************************************
+		 **			KeyLines Nodes		   **
+		 ************************************/
 
 
 		/***********************************/

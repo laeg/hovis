@@ -2,7 +2,7 @@
 
 angular.module('graphAngularApp')
 	.controller('MainCtrl', function ($scope) {
-		
+
 
 		/***********************************
 		 **		Slide Menu

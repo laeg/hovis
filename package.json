@@ -1,5 +1,6 @@
 {
   "name": "graphangular",
+	"description":"Graph visualisation with KeyLines",
   "version": "0.0.0",
   "dependencies": {},
   "devDependencies": {

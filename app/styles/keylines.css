@@ -1,0 +1,27 @@
+#mainBody {
+	height: 573px;
+}
+
+.container {
+	padding-left: 100px;
+	padding-right: 100px;
+	height: 100%;
+	width: 100%;
+}
+
+snap-content {
+	height: 100%;
+	width: 100%;
+	background-color: #FFF;
+	border-right: 1px solid #999;
+}
+
+#expandButton {
+	right:0px;
+}
+
+/* Need to do something clever here */
+#chartId{
+	width:650px; 
+	height:430px;
+}
