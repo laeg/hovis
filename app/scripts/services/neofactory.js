@@ -35,28 +35,27 @@ angular.module('graphAngularApp')
 				id: params
 			};
 
-			//console.log('IM IN');
-			//console.log(queryChoice);
-			//console.log(params);
-			console.log(JSON.stringify({
+			var data = JSON.stringify({
 				query: queryString,
 				params: params
-			}));
+			});
 
+			console.log(data);
 
+			//$http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
 			//delete $http.defaults.headers.common['X-Requested-With'];
 			// change the parameters
 			//$http.defaults.headers.common['Authorization'];
 
 
 			return $http.post(urlBase, {
+				type: 'POST',
 				headers: headers,
-				data: JSON.stringify({
-					query: queryString,
-					params: params
-				}),
+				data: data,
 				dataType: 'json'
-			});
+			}, headers);
+
+
 			//return $http.post({
 			//	url: urlBase,
 			//	type: 'POST',

@@ -2,11 +2,9 @@
 
 angular.module('graphAngularApp')
   .directive('klTimebar', ['klTimebarService', '$timeout', function (klTimebarService, $timeout) {
-
     return {
 
-      restrict: 'A',  
-
+      restrict: 'A',
       scope: {
         klOptions: '=',
         klTimebar: '='

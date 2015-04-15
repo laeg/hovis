@@ -1,5 +1,24 @@
 'use strict';
 
+// shim Object.create
+if (typeof Object.create !== 'function') {
+  Object.create = (function() {
+    var Temp = function() {};
+    return function (prototype) {
+      if (arguments.length > 1) {
+        throw new Error('Second argument not supported');
+      }
+      if (typeof prototype !== 'object') {
+        throw new TypeError('Argument must be an object');
+      }
+      Temp.prototype = prototype;
+      var result = new Temp();
+      Temp.prototype = null;
+      return result;
+    };
+  })();
+}
+
 angular.module('graphAngularApp')
 	.factory('klComponent', ['$rootScope', function ($rootScope) {
 

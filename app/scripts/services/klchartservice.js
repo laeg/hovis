@@ -1,8 +1,7 @@
 'use strict';
 
 angular.module('graphAngularApp')
-  .factory('klChartService', ['klComponent', function (klComponent) { 
-
+  .factory('klChartService', ['klComponent', function (klComponent) {
     var klChartService = Object.create(klComponent);
 
     klChartService.create = function (elemId, callback) {

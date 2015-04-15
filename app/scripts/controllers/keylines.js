@@ -11,13 +11,13 @@ angular.module('graphAngularApp')
 			queryChoice = 'start';
 			console.log(searchType);
 			console.log(queryChoice);
-		}
+		};
 
 		/************************************
 		 **		   Slide Menu Config	   **
 		 ************************************/
 		$scope.snapOpts = {
-			disable: 'left'
+			//disable: 'left'
 		};
 
 
@@ -77,16 +77,19 @@ angular.module('graphAngularApp')
 			var watchingSearch = $scope.$watch('neoID', function (id) {
 				// Need some real handling!!
 				if (id !== 'undefined' && id !== null && id !== '') {
-					console.log('YO' + id);
+					// Call itself to stop watching the input box and take 
+					// the last known value before 'search db' is clicked
 					watchingSearch();
 
 					neoFactory.callCypher(queryChoice, id)
-						.success(function (json) {
-								console.log(parseResult(json));
+						.success(function (json, status, headers, config) {
+							$scope.neo4jData = json;
+							console.log(json.data);
+							console.log(neo4jData);
 						})
-						.error(function (xhr) {
-							console.log(xhr);
-						})
+						.error(function (json) {
+							console.log(json);
+						});
 				}
 			});
 

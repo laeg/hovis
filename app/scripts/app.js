@@ -6,13 +6,13 @@ angular
     'ngResource',
     'ngSanitize',
     'ngRoute',
-	'snap'
+    'snap'
   ])
 	.config(function ($routeProvider) {
 		$routeProvider
 			.when('/', {
 				templateUrl: 'views/main.html',
-				controller: 'KeylinesCtrl'
+				controller: 'MainCtrl'
 			})
 			.when('/help', {
 				templateUrl: 'views/help.html',
