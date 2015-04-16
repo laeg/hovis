@@ -2,7 +2,7 @@
 
 angular.module('graphAngularApp')
 	.factory('neoFactory', ['$http', function ($http) {
-		var urlBase = 'http://localhost:7474/db/data/cypher';
+		var urlBase = 'http://localhost:7474/db/data/';
 
 		var neoFactory = {};
 
@@ -21,9 +21,46 @@ angular.module('graphAngularApp')
 		 ************************************/
 		var queryTemplates = {
 			start: 'START n=node({id}) \n' + 'MATCH (n)-[r]->(e) \n' + 'RETURN n, labels(n), r, e, labels(e) \n' + 'LIMIT 10'
+			//start: 'START n=node({id}) MATCH (n)-[r]->(e) RETURN n, labels(n), r, e, labels(e) LIMIT 10'
 		};
 
 		/************************************
+		 **			GET - Node			   **
+		 **			@param - nodeId		   **
+		 ************************************/
+		neoFactory.getNode = function (nodeId) {
+			// create get URL of
+			// http://localhost:7474/db/data/node/:id
+			var nodeUrl = urlBase + 'node/' + nodeId;
+		
+			// On complete return success or error response back to Ctrler
+			return $http.get(nodeUrl, {
+				method: 'GET',
+				headers: headers,
+				dataType: 'json'
+			},headers);
+		};
+		
+		/************************************
+		 **			GET - Relationships			   **
+		 **			@param - nodeId		   **
+		 ************************************/
+		neoFactory.getRelationships = function (nodeId) {
+			// create get URL of
+			// http://localhost:7474/db/data/node/:id
+			var nodeUrl = urlBase + 'node/' + nodeId;
+		
+			// On complete return success or error response back to Ctrler
+			return $http.get(nodeUrl, {
+				method: 'GET',
+				headers: headers,
+				dataType: 'json'
+			},headers);
+		};
+		
+		
+		
+		 /************************************
 		 **				Call Cypher		   **
 		 ************************************/
 		neoFactory.callCypher = function (queryChoice, params) {
@@ -48,24 +85,13 @@ angular.module('graphAngularApp')
 			//$http.defaults.headers.common['Authorization'];
 
 
-			return $http.post(urlBase, {
+			return $http.post(urlBase + 'cypher', {
 				type: 'POST',
 				headers: headers,
 				data: data,
 				dataType: 'json'
 			}, headers);
 
-
-			//return $http.post({
-			//	url: urlBase,
-			//	type: 'POST',
-			//	data: JSON.stringify({
-			//		query: queryString,
-			//		params: params
-			//	}),
-			//	dataType: 'json',
-			//	headers: headers
-			//});
 		};
 
 		return neoFactory;

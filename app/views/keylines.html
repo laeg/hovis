@@ -2,6 +2,25 @@
 	
 	<link rel="stylesheet" href="styles/keylines.css">
 
+	<!-- Left sidebar -->
+	<div snap-drawer="left">
+		<div class="panel">
+
+			<div class="panel-heading col-lg-4">
+				<h4>Yo</h4>
+			</div>
+
+			<!-- Expand attribute button -->
+			<div id="expandButton" class="col-lg-4">
+				<button class="btn btn-small" snap-toggle="left">Close
+				</button>
+			</div>
+			<!-- END Expand attribute button -->
+
+		</div>
+	</div>
+	<!-- END Left sidebar -->
+	
 	<!-- Right sidebar -->
 	<div snap-drawer="right">
 		<div class="panel">
@@ -20,20 +39,21 @@
 	</div>
 	<!-- END Right sidebar -->
 
-	<!-- Main content -->
-	<snap-content snap-options="snapOpts">
+	<!-- Snap content / Keylines Chart -->
+	<snap-content snap-options="snapOpts" data-snap-ignore="true">
 
 		<div class="container">
-
-			
-			
+		
 			<!-- Search Bar -->
 			<div class="row">
 				<div class="col-lg-11">
 					<!-- /.col-lg-6 -->
 					<div class="input-group">
+						<button class="btn btn-small" snap-toggle="left">Menu</button>
+						
 						<div class="input-group-btn">
-							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="glyphicon glyphicon-tags"></span> Type
+											
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="true"> <span class="glyphicon glyphicon-tags"></span> Type
 							</button>
 							<ul class="dropdown-menu dropdown-menu-right" role="menu">
 								<li><a href="#">All</a>
@@ -57,7 +77,7 @@
 						</div>
 						
 						<!-- /btn-group -->
-						<input type="text" class="form-control" aria-label="..." ng-model="neoID">
+						<input type="text" class="form-control" aria-label="..." ng-model="searchInput">
 						
 						<div class="input-group-btn">
 							<button class="btn btn-small" ng-click="neoID = ''">Clear</button>
@@ -92,25 +112,9 @@
 		</div>
 
 	</snap-content>
-	<!-- END KeyLines Chart -->
+	<!-- END Snap Content / KeyLines Chart Area -->
 
-	<!-- Right sidebar -->
-	<div snap-drawer="left">
-		<div class="panel">
-
-			<div class="panel-heading col-lg-4">
-				<h4>Yo</h4>
-			</div>
-
-			<!-- Expand attribute button -->
-			<div id="expandButton" class="col-lg-4">
-				<button class="btn btn-small" snap-toggle="left">Close
-				</button>
-			</div>
-			<!-- END Expand attribute button -->
-
-		</div>
-	</div>
-	<!-- END Right sidebar -->
+	
+	
 </div>
-<!-- END Right sidebar -->
+<!-- END Keylines.html -->
