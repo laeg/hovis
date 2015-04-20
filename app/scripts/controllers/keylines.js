@@ -3,6 +3,35 @@
 angular.module('graphAngularApp')
 	.controller('KeylinesCtrl', function ($scope, neoFactory) {
 
+		/************************************
+		 **		   Search Bar Config	   **
+		 ************************************/
+		$scope.menuItems = [{
+			id: 1,
+			name: 'All'
+		}, {
+			id: 2,
+			name: 'ID'
+		}, {
+			id: 3,
+			name: 'People'
+		}, {
+			id: 4,
+			name: 'Organisation'
+		}, {
+			id: 5,
+			name: 'Object'
+		}, {
+			id: 6,
+			name: 'Location'
+		}, {
+			id: 7,
+			name: 'Event'
+		}];
+
+		$scope.selectedMenuItem = 1;
+
+
 		var searchType = '';
 		var queryChoice = '';
 
@@ -60,7 +89,7 @@ angular.module('graphAngularApp')
 			overview: false,
 			controlColour: 'grey',
 			selectionColour: '#24F',
-			logo: 'images/logo.png'
+			logo: 'assets/homeoffice.png'
 		};
 
 		$scope.zoom = function (type) {
@@ -97,24 +126,17 @@ angular.module('graphAngularApp')
 					//neoFactory.callCypher(queryChoice, id)
 					neoFactory.getNode(id)
 						.success(function (json) {
-						
-							console.log(json);
-							console.log(JSON.stringify(json));
+
 							// Check if its the first time the chart has been created
-							if (firstQuery === true) {
-								
-								// Set first query to false so nodes retrieved are only 
+							if (firstQuery !== true) {
+								// Add a new node to the chart using the keylines expand method
+								$scope.chart.expand(createKeylinesNode(createNode(json.metadata.id, json.metadata, json.data)));
+								// stop showing the loading gif
+							} else {
+
+								// Set first query to false now as it's been run once
 								firstQuery = false;
 
-								//var newNode = createNode(json.metadata.id, json.metadata, json.data);
-
-								console.log(JSON.stringify(createKeylinesNode(createNode(json.metadata.id, json.metadata, json.data))));
-								
-								console.log('-------------');
-								console.log(createNode(json.metadata.id, json.metadata, json.data));
-								console.log('-------------');
-								console.log(createKeylinesNode(createNode(json.metadata.id, json.metadata, json.data)));
-								
 								// Create a node from the neo4j returned REST data - Return var node to createKeylinesNode
 								// Create a keylines version of the node and store the existing neo4j version as an attribute - Return var
 								// Push the keylines node onto the stack used for the chart
@@ -123,17 +145,10 @@ angular.module('graphAngularApp')
 								$scope.chart.load({
 									type: 'LinkChart',
 									items: keylinesItems
-								}, function(){
+								}, function () {
 									$scope.chart.layout('standard');
+									// stop showing the loading gif
 								});
-
-								
-							} else {
-
-								var newNode = createNode(json.metadata.id, json.metadata, json.data);
-
-								console.log(JSON.stringify(newNode));
-								//$scope.chart.expand(randomChart()
 
 							}
 
@@ -141,8 +156,10 @@ angular.module('graphAngularApp')
 						.error(function (json) {
 
 							// Need better error handling depending on the returned error
-							console.log(json);
 							alert('Sorry we could not find an node with the ID: ' + id);
+
+
+							// stop showing the loading gif
 						});
 				}
 			});
@@ -180,9 +197,9 @@ angular.module('graphAngularApp')
 				id: node.nodeId,
 				type: 'node',
 				// get the label based on type and content
-				t: node.metadata.labels[0],
+				t: node.metadata.labels[0] + '\n' + 'Bobby Son!',
 				// get the icon based on the labels
-				u: 'images/logo.png',
+				u: getNodeType(node),
 				// cut out circle from original image?
 				// ci: true,
 				// determine the size of the node
@@ -193,6 +210,52 @@ angular.module('graphAngularApp')
 				d: node
 			};
 			return keylinesNode;
+		}
+
+		/************************************
+		 **	 KeyLines Get Node Icon   **
+		 ************************************
+		 **	 Function to find out what the **
+		 **  Node labels and deduce what   **
+		 **	 icon should be displayed	   **
+		 ************************************/
+		function getNodeType(node) {
+
+			// We can either take the simple route which is what is the label set to in the keylines object. e.g. t: "User" which is always the first options from the metadata label array
+			// Or we can go into the d: metadata object which contains all the information present in neo4j
+			// The current option is to evaluate the metadata and determine the choice
+			var icon = '';
+
+			console.log(node);
+			// Check that the icon array is < 
+			if (node.metadata.labels.length > 1) {
+				console.log(node.metadata.labels);
+				for (var i = 0; i < node.metadata.labels.length; i++) {
+					if (node.metadata.labels[i] === 'Person' || node.metadata.labels[i] === 'Object' || node.metadata.labels[i] === 'Location' || node.metadata.labels[i] === 'Event') {
+						// Do something around gender of person
+						if (node.metadata.labels[i] === 'Person') {
+							icon = node.data.gender === 'F' ? 'images/woman.png' : 'images/man.png';;
+							console.log(icon);
+							break;
+						}
+						//else if (){} 
+						else {
+							icon = 'images/' + node.metadata.labels[i].toLowerCase() + '.png';
+							console.log(icon);
+							break;
+						}
+					}
+				}
+			} else {
+				// Dont forget to get the file type? 
+				// Could do something sensible around this!
+				icon = 'images/' + node.metadata.labels[0].toLowerCase() + '.png';
+				console.log(icon);
+				break;
+			}
+
+
+			return icon;
 		}
 
 		/************************************
@@ -217,29 +280,6 @@ angular.module('graphAngularApp')
 
 
 		/***********************************/
-		function randomChart() {
-			function randInt(begin, end) {
-				return Math.floor(Math.random() * (end - begin)) + begin;
-			}
-			var items = [];
-			for (var i = 0; i < 20; i++) {
-				items.push({
-					id: 'item' + i,
-					type: 'node',
-					c: 'rgb(20, 100, 200)',
-					t: 'item' + i
-				});
-				items.push({
-					id: 'link' + i,
-					type: 'link',
-					id1: 'item' + i,
-					id2: 'item' + ((i > 10) ? randInt(0, 11) : randInt(11, 20))
-				});
-			}
-			return {
-				type: 'LinkChart',
-				items: items
-			};
-		};
+
 
 	});

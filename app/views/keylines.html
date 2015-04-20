@@ -1,17 +1,18 @@
 <div ng-controller="KeylinesCtrl">
-	
+
 	<link rel="stylesheet" href="styles/keylines.css">
 
 	<!-- Left sidebar -->
 	<div snap-drawer="left">
 		<div class="panel">
 
-			<div class="panel-heading col-lg-4">
-				<h4>Yo</h4>
+			<div class="panel-heading col-md-4">
+				<h4>Menu</h4>
+				
 			</div>
 
 			<!-- Expand attribute button -->
-			<div id="expandButton" class="col-lg-4">
+			<div id="expandButton" class="col-md-4">
 				<button class="btn btn-small" snap-toggle="left">Close
 				</button>
 			</div>
@@ -20,17 +21,17 @@
 		</div>
 	</div>
 	<!-- END Left sidebar -->
-	
+
 	<!-- Right sidebar -->
 	<div snap-drawer="right">
 		<div class="panel">
 
-			<div class="panel-heading col-lg-4">
+			<div class="panel-heading col-md-4">
 				<h4>Attributes</h4>
 			</div>
 
 			<!-- Expand attribute button -->
-			<div id="expandButton" class="col-lg-4">
+			<div id="expandButton" class="col-md-4">
 				<button class="btn btn-small" snap-toggle="right">Close Attributes</button>
 			</div>
 			<!-- END Expand attribute button -->
@@ -43,69 +44,54 @@
 	<snap-content snap-options="snapOpts" data-snap-ignore="true">
 
 		<div class="container">
-		
-			<!-- Search Bar -->
-			<div class="row">
-				<div class="col-lg-11">
-					<!-- /.col-lg-6 -->
-					<div class="input-group">
-						<button class="btn btn-small" snap-toggle="left">Menu</button>
-						
-						<div class="input-group-btn">
-											
-							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="true"> <span class="glyphicon glyphicon-tags"></span> Type
-							</button>
-							<ul class="dropdown-menu dropdown-menu-right" role="menu">
-								<li><a href="#">All</a>
-								</li>
-								<li class="divider"></li>
-								<li><a ng-click="setVariables('id')">ID</a>
-								</li>
-								<li class="divider"></li>
-								<li><a ng-click="setVariables('people')">People</a>
-								</li>
-								<li class="divider"></li>
-								<li><a href="#">Object</a>
-								</li>
-								<li class="divider"></li>
-								<li><a href="#">Location</a>
-								</li>
-								<li class="divider"></li>
-								<li><a href="#">Event</a>
-								</li>
-							</ul>
-						</div>
-						
-						<!-- /btn-group -->
-						<input type="text" class="form-control" aria-label="..." ng-model="searchInput">
-						
-						<div class="input-group-btn">
-							<button class="btn btn-small" ng-click="neoID = ''">Clear</button>
-							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="glyphicon glyphicon-search"></span>
-							</button>
-							<ul class="dropdown-menu dropdown-menu-right" role="menu">
-								<li><a href="#">Search Network</a></li>
-								<li class="divider"></li>
-								<li><a ng-click="renderNode()">Search Database</a></li>
-							</ul>
-						</div>
-						<!-- /btn-group -->
-					</div>
-				</div>
-				<!-- /input-group -->
 
-				<!-- Expand attribute button -->
-				<div id="expandButton" class="col-lg-1">
-					<button class="btn btn-small" snap-toggle="right">Attributes <span class="glyphicon glyphicon-resize-horizontal"></span>
+			<!-- Menu Items -->
+			<div class="row">
+				<div class="col-md-5">
+					<button class="btn btn-small pull-left" snap-toggle="left">Menu</button>
+				</div>
+				<div class="col-md-7">
+					<button class="btn btn-small pull-right" snap-toggle="right">Attributes <span class="glyphicon glyphicon-resize-horizontal"></span>
 					</button>
 				</div>
-				<!-- END Expand attribute button -->
 			</div>
-			<!-- /.row -->
-			<!-- END Search Bar -->
+			<!-- END Menu Items -->
+
+			<!-- Menu Items -->
+			<div class="row">
+
+				<div class="col-md-3">
+					<drop-down-btn data-menu-type="button" select-val="selectedMenuItem = selectedVal" preselected-item="selectedMenuItem" data-dropdown-data="menuItems"></drop-down-btn>
+				</div>
+
+				<div class="col-md-7">
+					<!-- Add the loading gif in here!!
+						on click ng-show the gif -->
+					
+					<input type="text" class="form-control" aria-label="..." ng-model="searchInput">
+				</div>
+
+				<div class="col-md-2">
+					<div class="input-group-btn">
+						<!--<button class="btn btn-small" ng-click="searchInput = ''">Clear</button>-->
+						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="glyphicon glyphicon-search"></span>
+						</button>
+						<ul class="dropdown-menu dropdown-menu-right" role="menu">
+							<li><a href="#">Search Network</a>
+							</li>
+							<li class="divider"></li>
+							<li><a ng-click="renderNode()">Search Database</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+			<!-- END Menu Items -->
 
 			<!-- KeyLines Chart -->
-			<div id='chartId' kl-base-path='../' kl-selected='selected' kl-chart='chart' kl-options='options'>
+			<div class="row">
+				<div id='chartId' kl-base-path='../' kl-selected='selected' kl-chart='chart' kl-options='options'>
+				</div>
 			</div>
 			<!-- END KeyLines Chart -->
 
@@ -114,7 +100,5 @@
 	</snap-content>
 	<!-- END Snap Content / KeyLines Chart Area -->
 
-	
-	
 </div>
 <!-- END Keylines.html -->

@@ -26,9 +26,9 @@ angular.module('graphAngularApp')
 
 		// event on specific component (specified by id after last colon)
 		$scope.$on('kl:ready:chartId', function () {
-			$scope.chart.load(randomChart(), function () {
-				$scope.chart.layout('standard');
-			});
+			//$scope.chart.load(randomChart(), function () {
+			//	$scope.chart.layout('standard');
+			//});
 		});
 
 		$scope.selected = [];
