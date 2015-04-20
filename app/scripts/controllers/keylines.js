@@ -103,13 +103,6 @@ angular.module('graphAngularApp')
 			$scope.chart.selection([]);
 		};
 
-		$scope.options = {
-			backColour: 'white',
-			overview: false,
-			controlColour: 'grey',
-			selectionColour: '#44D'
-		};
-
 
 		/************************************
 		 **		KeyLines Render Nodes	   **
@@ -123,10 +116,10 @@ angular.module('graphAngularApp')
 					// the last known value before 'search db' is clicked
 					watchingSearch();
 
-					//neoFactory.callCypher(queryChoice, id)
+					// Call the node GET from the neo factory
 					neoFactory.getNode(id)
 						.success(function (json) {
-
+							console.log(json);
 							// Check if its the first time the chart has been created
 							if (firstQuery !== true) {
 								// Add a new node to the chart using the keylines expand method
@@ -153,7 +146,7 @@ angular.module('graphAngularApp')
 							}
 
 						})
-						.error(function (json) {
+						.error(function (error) {
 
 							// Need better error handling depending on the returned error
 							alert('Sorry we could not find an node with the ID: ' + id);
@@ -176,10 +169,21 @@ angular.module('graphAngularApp')
 		 ************************************/
 		function createNode(id, metadata, data) {
 			var nodeId = JSON.stringify(metadata.id);
+			
+			var relationships = neoFactory.getRelationships(id)
+						.success(function (json) {
+							console.log(json);
+						})
+						.error(function (error) {
+							console.log('Error');
+							console.log(error);
+						});
+			
 			var node = {
 				'nodeId': nodeId,
 				'metadata': metadata,
-				'data': data
+				'data': data,
+				'relationships': relationships
 			};
 			return node;
 		}
@@ -251,7 +255,7 @@ angular.module('graphAngularApp')
 				// Could do something sensible around this!
 				icon = 'images/' + node.metadata.labels[0].toLowerCase() + '.png';
 				console.log(icon);
-				break;
+				//break;
 			}
 
 

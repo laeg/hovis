@@ -47,8 +47,10 @@ angular.module('graphAngularApp')
 		 ************************************/
 		neoFactory.getRelationships = function (nodeId) {
 			// create get URL of
-			// http://localhost:7474/db/data/node/:id
-			var nodeUrl = urlBase + 'node/' + nodeId;
+			// URL BASE
+			// 'http://localhost:7474/db/data/';
+			// http://localhost:7474/db/data/node/:id/relationships/all"
+			var nodeUrl = urlBase + 'node/' + nodeId + '/relationships/all';
 		
 			// On complete return success or error response back to Ctrler
 			return $http.get(nodeUrl, {
