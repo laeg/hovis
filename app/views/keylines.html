@@ -8,7 +8,7 @@
 
 			<div class="panel-heading col-md-4">
 				<h4>Menu</h4>
-				
+				<div custom-accordian collapse-data="collapseData" collapse-panel-id="collapse-panel" collapse-panel-body-id="collapse-panel-body"></div>
 			</div>
 
 			<!-- Expand attribute button -->
@@ -59,30 +59,31 @@
 
 			<!-- Menu Items -->
 			<div class="row">
+				<div class="input-group-btn">
+					<div class="col-md-3">
+						<drop-down-btn data-menu-type="button" select-val="selectedMenuItem = selectedVal" preselected-item="selectedMenuItem" data-dropdown-data="menuItems"></drop-down-btn>
+					</div>
 
-				<div class="col-md-3">
-					<drop-down-btn data-menu-type="button" select-val="selectedMenuItem = selectedVal" preselected-item="selectedMenuItem" data-dropdown-data="menuItems"></drop-down-btn>
-				</div>
-
-				<div class="col-md-7">
-					<!-- Add the loading gif in here!!
+					<div class="col-md-7">
+						<!-- Add the loading gif in here!!
 						on click ng-show the gif -->
-					
-					<input type="text" class="form-control" aria-label="..." ng-model="searchInput">
-				</div>
 
-				<div class="col-md-2">
-					<div class="input-group-btn">
-						<!--<button class="btn btn-small" ng-click="searchInput = ''">Clear</button>-->
-						<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="glyphicon glyphicon-search"></span>
-						</button>
-						<ul class="dropdown-menu dropdown-menu-right" role="menu">
-							<li><a href="#">Search Network</a>
-							</li>
-							<li class="divider"></li>
-							<li><a ng-click="renderNode()">Search Database</a>
-							</li>
-						</ul>
+						<input type="text" class="form-control" aria-label="..." ng-model="searchInput">
+					</div>
+
+					<div class="col-md-2">
+						<div>
+							<!--<button class="btn btn-small" ng-click="searchInput = ''">Clear</button>-->
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="glyphicon glyphicon-search"></span>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-right" role="menu">
+								<li><a href="#">Search Network</a>
+								</li>
+								<li class="divider"></li>
+								<li><a ng-click="renderNode()">Search Database</a>
+								</li>
+							</ul>
+						</div>
 					</div>
 				</div>
 			</div>

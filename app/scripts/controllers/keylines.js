@@ -53,8 +53,7 @@ angular.module('graphAngularApp')
 		$scope.snapOpts = {
 			// Disable touch to drag so users can highlight etc 
 			// on the page without pulling out the 
-			touchToDrag: false,
-			//dragger:null
+			touchToDrag: false
 		};
 
 
@@ -123,7 +122,7 @@ angular.module('graphAngularApp')
 							// Check if its the first time the chart has been created
 							if (firstQuery !== true) {
 								// Add a new node to the chart using the keylines expand method
-								$scope.chart.expand(createKeylinesNode(createNode(json.metadata.id, json.metadata, json.data)));
+								$scope.chart.expand(createKeylinesNode(createNode(json.metadata.id, json.metadata, json.data)));			
 								// stop showing the loading gif
 							} else {
 
@@ -151,7 +150,6 @@ angular.module('graphAngularApp')
 							// Need better error handling depending on the returned error
 							alert('Sorry we could not find an node with the ID: ' + id);
 
-
 							// stop showing the loading gif
 						});
 				}
@@ -169,10 +167,10 @@ angular.module('graphAngularApp')
 		 ************************************/
 		function createNode(id, metadata, data) {
 			var nodeId = JSON.stringify(metadata.id);
-			
-			var relationships = neoFactory.getRelationships(id)
+			var relationships = [];
+			neoFactory.getRelationshipsOfNode(id)
 						.success(function (json) {
-							console.log(json);
+							relationships.push(json);
 						})
 						.error(function (error) {
 							console.log('Error');
@@ -213,6 +211,7 @@ angular.module('graphAngularApp')
 				// save the neo4j item for more information
 				d: node
 			};
+			console.log(keylinesNode);
 			return keylinesNode;
 		}
 
@@ -230,7 +229,6 @@ angular.module('graphAngularApp')
 			// The current option is to evaluate the metadata and determine the choice
 			var icon = '';
 
-			console.log(node);
 			// Check that the icon array is < 
 			if (node.metadata.labels.length > 1) {
 				console.log(node.metadata.labels);
@@ -265,18 +263,7 @@ angular.module('graphAngularApp')
 		/************************************
 		 **	  KeyLines Parse Results	   **
 		 ************************************/
-		function parseResult(json) {
-			// Set the neo4j item from the json data
-			var neo4jItem = json.data;
-
-			// Create an array for the neo4jItems
-			var items = [];
-
-			for (var i = 0; i < neo4jItem.length; i++) {
-
-			}
-
-		}
+	
 
 		/************************************
 		 **			KeyLines Nodes		   **

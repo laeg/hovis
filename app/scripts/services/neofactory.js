@@ -45,7 +45,7 @@ angular.module('graphAngularApp')
 		 **			GET - Relationships			   **
 		 **			@param - nodeId		   **
 		 ************************************/
-		neoFactory.getRelationships = function (nodeId) {
+		neoFactory.getRelationshipsOfNode = function (nodeId) {
 			// create get URL of
 			// URL BASE
 			// 'http://localhost:7474/db/data/';
