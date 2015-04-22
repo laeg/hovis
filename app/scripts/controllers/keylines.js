@@ -116,42 +116,15 @@ angular.module('graphAngularApp')
 					watchingSearch();
 
 					// Call the node GET from the neo factory
-					neoFactory.getNode(id)
-						.success(function (json) {
-							console.log(json);
-							// Check if its the first time the chart has been created
-							if (firstQuery !== true) {
-								// Add a new node to the chart using the keylines expand method
-								$scope.chart.expand(createKeylinesNode(createNode(json.metadata.id, json.metadata, json.data)));			
-								// stop showing the loading gif
-							} else {
+					neoFactory.getNode(id).then(function (json) {
 
-								// Set first query to false now as it's been run once
-								firstQuery = false;
+						// Create a node from the neo4j returned REST data - Return var node to createKeylinesNode
+						// Create a keylines version of the node and store the existing neo4j version as an attribute - Return var
+						// Push the keylines node onto the stack used for the chart
+						
+						createNode(json.data.metadata.id, json.data.metadata, json.data.data);
 
-								// Create a node from the neo4j returned REST data - Return var node to createKeylinesNode
-								// Create a keylines version of the node and store the existing neo4j version as an attribute - Return var
-								// Push the keylines node onto the stack used for the chart
-								keylinesItems.push(createKeylinesNode(createNode(json.metadata.id, json.metadata, json.data)));
-
-								$scope.chart.load({
-									type: 'LinkChart',
-									items: keylinesItems
-								}, function () {
-									$scope.chart.layout('standard');
-									// stop showing the loading gif
-								});
-
-							}
-
-						})
-						.error(function (error) {
-
-							// Need better error handling depending on the returned error
-							alert('Sorry we could not find an node with the ID: ' + id);
-
-							// stop showing the loading gif
-						});
+					});
 				}
 			});
 
@@ -165,25 +138,46 @@ angular.module('graphAngularApp')
 		 **	 data into one object ready    **
 		 **	 for the keylines node func	   **
 		 ************************************/
-		function createNode(id, metadata, data) {
+
+		function createNode(id, metadata, data, firstQuery) {
+
 			var nodeId = JSON.stringify(metadata.id);
-			var relationships = [];
+			var relationships, node;
 			neoFactory.getRelationshipsOfNode(id)
-						.success(function (json) {
-							relationships.push(json);
-						})
-						.error(function (error) {
-							console.log('Error');
-							console.log(error);
-						});
-			
-			var node = {
-				'nodeId': nodeId,
-				'metadata': metadata,
-				'data': data,
-				'relationships': relationships
+				.then(function (json) {
+					
+					relationships = calculateRels(json.data,metadata.id);
+					node = {
+						'nodeId': nodeId,
+						'metadata': metadata,
+						'data': data,
+						'relationships': relationships
+					}
+					// Parse the node into the keylines format
+					createKeylinesNode(node);
+
+				});
+
+		}
+
+		function calculateRels(json, nodeId) {
+			var original = json,
+				inCount = 0,
+				outCount = 0,
+				relationships;
+			for (var i = 0; i < json.length; i++) {
+				if (String(json[i].end.slice(-1)) !== String(nodeId)) {
+					inCount++;
+				} else {
+					outCount++;
+				}
+			}
+			relationships = {
+				'inCount': inCount,
+				'outCount': outCount,
+				'original': original
 			};
-			return node;
+			return relationships;
 		}
 
 		/************************************
@@ -194,6 +188,8 @@ angular.module('graphAngularApp')
 		 **	 chart						   **
 		 ************************************/
 		function createKeylinesNode(node) {
+			
+				console.log(node);
 			// Keylines node
 			var keylinesNode = {
 				id: node.nodeId,
@@ -211,8 +207,25 @@ angular.module('graphAngularApp')
 				// save the neo4j item for more information
 				d: node
 			};
-			console.log(keylinesNode);
-			return keylinesNode;
+			
+			keylinesItems.push(keylinesNode);
+			
+			if (!firstQuery) {
+				$scope.chart.expand(keylinesNode);
+
+			} else {
+				firstQuery = false;
+				
+				$scope.chart.load({
+					type: 'LinkChart',
+					items: keylinesItems
+				}, function () {
+					$scope.chart.layout('standard');
+					// stop showing the loading gif
+				});
+			}
+
+			
 		}
 
 		/************************************
@@ -236,8 +249,9 @@ angular.module('graphAngularApp')
 					if (node.metadata.labels[i] === 'Person' || node.metadata.labels[i] === 'Object' || node.metadata.labels[i] === 'Location' || node.metadata.labels[i] === 'Event') {
 						// Do something around gender of person
 						if (node.metadata.labels[i] === 'Person') {
+//							console.log(node);
 							icon = node.data.gender === 'F' ? 'images/woman.png' : 'images/man.png';;
-							console.log(icon);
+							//console.log(icon);
 							break;
 						}
 						//else if (){} 
@@ -263,7 +277,7 @@ angular.module('graphAngularApp')
 		/************************************
 		 **	  KeyLines Parse Results	   **
 		 ************************************/
-	
+
 
 		/************************************
 		 **			KeyLines Nodes		   **

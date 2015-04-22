@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('graphAngularApp')
-	.factory('neoFactory', ['$http', function ($http) {
+	.factory('neoFactory', ['$http', '$q', function ($http, $q) {
 		var urlBase = 'http://localhost:7474/db/data/';
 
 		var neoFactory = {};
@@ -28,24 +28,58 @@ angular.module('graphAngularApp')
 		 **			GET - Node			   **
 		 **			@param - nodeId		   **
 		 ************************************/
-		neoFactory.getNode = function (nodeId) {
+//		neoFactory.getNode = function (nodeId) {
+//			// create get URL of
+//			// http://localhost:7474/db/data/node/:id
+//			var nodeUrl = urlBase + 'node/' + nodeId;
+//		
+//			// On complete return success or error response back to Ctrler
+//			return $http.get(nodeUrl, {
+//				method: 'GET',
+//				headers: headers,
+//				dataType: 'json'
+//			},headers);
+//		};
+		
+		var getNode = function (nodeId) {
+			var deferred = $q.defer();
+			
 			// create get URL of
 			// http://localhost:7474/db/data/node/:id
 			var nodeUrl = urlBase + 'node/' + nodeId;
 		
 			// On complete return success or error response back to Ctrler
-			return $http.get(nodeUrl, {
+			deferred.resolve($http.get(nodeUrl, {
 				method: 'GET',
 				headers: headers,
 				dataType: 'json'
-			},headers);
+			},headers));
+			
+			return deferred.promise;
 		};
 		
 		/************************************
 		 **			GET - Relationships			   **
 		 **			@param - nodeId		   **
 		 ************************************/
-		neoFactory.getRelationshipsOfNode = function (nodeId) {
+//		neoFactory.getRelationshipsOfNode = function (nodeId) {
+//			// create get URL of
+//			// URL BASE
+//			// 'http://localhost:7474/db/data/';
+//			// http://localhost:7474/db/data/node/:id/relationships/all"
+//			var nodeUrl = urlBase + 'node/' + nodeId + '/relationships/all';
+//		
+//			// On complete return success or error response back to Ctrler
+//			return $http.get(nodeUrl, {
+//				method: 'GET',
+//				headers: headers,
+//				dataType: 'json'
+//			},headers);
+//		};
+		
+		var getRelationshipsOfNode = function (nodeId) {
+			var deferred = $q.defer();
+			
 			// create get URL of
 			// URL BASE
 			// 'http://localhost:7474/db/data/';
@@ -53,11 +87,13 @@ angular.module('graphAngularApp')
 			var nodeUrl = urlBase + 'node/' + nodeId + '/relationships/all';
 		
 			// On complete return success or error response back to Ctrler
-			return $http.get(nodeUrl, {
+			deferred.resolve($http.get(nodeUrl, {
 				method: 'GET',
 				headers: headers,
 				dataType: 'json'
-			},headers);
+			},headers));		
+			
+			return deferred.promise;
 		};
 		
 		
@@ -81,12 +117,6 @@ angular.module('graphAngularApp')
 
 			console.log(data);
 
-			//$http.defaults.headers.post["Content-Type"] = "application/x-www-form-urlencoded";
-			//delete $http.defaults.headers.common['X-Requested-With'];
-			// change the parameters
-			//$http.defaults.headers.common['Authorization'];
-
-
 			return $http.post(urlBase + 'cypher', {
 				type: 'POST',
 				headers: headers,
@@ -96,5 +126,9 @@ angular.module('graphAngularApp')
 
 		};
 
-		return neoFactory;
+//		return neoFactory;
+		return {
+			getNode : getNode,
+			getRelationshipsOfNode : getRelationshipsOfNode
+		}
   }]);
