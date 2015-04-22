@@ -6,8 +6,7 @@ angular
     'ngResource',
     'ngSanitize',
     'ngRoute',
-    'snap',
-	'angularAccordion'
+    'snap'
   ])
 	.config(function ($routeProvider) {
 		$routeProvider

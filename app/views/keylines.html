@@ -8,21 +8,17 @@
 
 			<div class="panel-heading col-md-4">
 				<h4>Menu</h4>
-
-				<!--<custom-accordion collapse-data="collapseData" collapse-panel-id="collapse-panel" collapse-panel-body-id="collapse-panel-body"></custom-accordion>-->
-
+				<div custom-accordian collapse-data="collapseData" collapse-panel-id="collapse-panel" collapse-panel-body-id="collapse-panel-body"></div>
 			</div>
 
-
-			<!-- Expand attribute button 
+			<!-- Expand attribute button -->
 			<div id="expandButton" class="col-md-4">
 				<button class="btn btn-small" snap-toggle="left">Close
 				</button>
-			</div>-->
+			</div>
 			<!-- END Expand attribute button -->
 
 		</div>
-
 	</div>
 	<!-- END Left sidebar -->
 
@@ -34,10 +30,10 @@
 				<h4>Attributes</h4>
 			</div>
 
-			<!-- Expand attribute button 
+			<!-- Expand attribute button -->
 			<div id="expandButton" class="col-md-4">
 				<button class="btn btn-small" snap-toggle="right">Close Attributes</button>
-			</div>-->
+			</div>
 			<!-- END Expand attribute button -->
 
 		</div>
@@ -52,7 +48,7 @@
 			<!-- Menu Items -->
 			<div class="row">
 				<div class="col-md-5">
-					<button class="btn btn-small pull-left" snap-toggle="left"><span class="glyphicon glyphicon-resize-horizontal"></span>  Menu</button>
+					<button class="btn btn-small pull-left" snap-toggle="left">Menu</button>
 				</div>
 				<div class="col-md-7">
 					<button class="btn btn-small pull-right" snap-toggle="right">Attributes <span class="glyphicon glyphicon-resize-horizontal"></span>
@@ -97,31 +93,8 @@
 			<div class="row">
 				<div id='chartId' kl-base-path='../' kl-selected='selected' kl-chart='chart' kl-options='options'>
 				</div>
-
-
 			</div>
 			<!-- END KeyLines Chart -->
-
-			<div class="row">
-				<ul class="list-group">
-					<li ng-repeat="item in app.items track by item.id" class="list-group-item">
-
-						<div class="panel panel-default">
-							<div ng-click="app.accordion.toggleFold(item.id)" class="panel-heading">
-								<span ng-bind="item.title"></span>
-							</div>
-							<div ng-show="app.accordion.isExpandedFold(item.id)" class="panel-body">
-								<p>
-									<span ng-bind="item.id"></span>
-									<span ng-bind="item.title"></span>
-								</p>
-							</div>
-						</div>
-
-					</li>
-				</ul>
-			</div>
-
 
 		</div>
 

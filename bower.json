@@ -12,6 +12,7 @@
     "angular-sanitize": "1.2.15",
     "angular-route": "1.2.15",
     "keylines": "c:\\bower-keylines",
+    "angular-ui-bootstrap": "~0.12.1",
     "angular-panels": "*",
     "angular-snap": "~1.8.1"
   },
