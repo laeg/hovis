@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('graphAngularApp')
-	.controller('KeylinesCtrl', function ($scope, neoFactory) {
+	.controller('KeylinesCtrl', ['$scope', 'graphAngularApp', function ($scope, neoFactory) {
 
 		/************************************
 		 **		   Search Bar Config	   **
@@ -170,6 +170,7 @@ angular.module('graphAngularApp')
 			var relationships = [];
 			neoFactory.getRelationshipsOfNode(id)
 						.success(function (json) {
+							//defered.resolve(json);
 							relationships.push(json);
 						})
 						.error(function (error) {
@@ -273,4 +274,4 @@ angular.module('graphAngularApp')
 		/***********************************/
 
 
-	});
+	}]);
