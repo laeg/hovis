@@ -186,6 +186,7 @@ module.exports = function (grunt) {
 		},
 
 		// Performs rewrites based on rev and the useminPrepare configuration
+		// Added /assets to assetsDirs
 		usemin: {
 			html: ['<%= yeoman.dist %>/{,*/}*.html'],
 			css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
@@ -262,6 +263,7 @@ module.exports = function (grunt) {
 		},
 
 		// Copies remaining files to places other tasks can use
+		// added dist to images and stylre
 		copy: {
 			dist: {
 				files: [{
@@ -281,13 +283,13 @@ module.exports = function (grunt) {
         }, {
 					expand: true,
 					cwd: '.tmp/images',
-					dest: '<%= yeoman.dist %>/images',
+					dest: '<%= yeoman.dist %>/dist/images',
 					src: ['generated/*']
         }]
 			},
 			styles: {
 				expand: true,
-				cwd: '<%= yeoman.app %>/styles',
+				cwd: '<%= yeoman.app %>/dist/styles',
 				dest: '.tmp/styles/',
 				src: '{,*/}*.css'
 			}

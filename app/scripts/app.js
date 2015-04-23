@@ -5,7 +5,9 @@ angular
     'ngCookies',
     'ngResource',
     'ngSanitize',
-    'ngRoute'
+    'ngRoute',
+	'snap', 
+	'vAccordion'
   ])
 	.config(function ($routeProvider) {
 		$routeProvider

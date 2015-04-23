@@ -3,20 +3,49 @@
 
 	<!-- Left sidebar -->
 	<div snap-drawer="left">
-		<div class="panel">
 
-			<div class="panel-heading col-md-4">
-				<h4>Menu</h4>
-				<div custom-accordian collapse-data="collapseData" collapse-panel-id="collapse-panel" collapse-panel-body-id="collapse-panel-body"></div>
+		<div class="row">
+			<div class="panel">
+
+				<div class="panel-heading">
+					<h4>Menu</h4>
+				</div>
+
+				<!-- Expand attribute button
+				<div id="expandButton" class="col-md-4">
+					<button class="btn btn-small" snap-toggle="left">Close
+					</button>
+				</div> -->
+				<!-- END Expand attribute button -->
+
 			</div>
+		</div>
 
-			<!-- Expand attribute button -->
-			<div id="expandButton" class="col-md-4">
-				<button class="btn btn-small" snap-toggle="left">Close
-				</button>
-			</div>
-			<!-- END Expand attribute button -->
+		<div class="row">
+			<!-- add `multiple` attribute to allow multiple sections to open at once -->
+			<v-accordion class="vAccordion--default col-md-12">
 
+				<!-- add expanded attribute to open the section -->
+				<v-pane ng-repeat="item in menuItems | filter : { headers : '!!'}" expanded="$first">
+					<v-pane-header>
+						{{item.header}}
+					</v-pane-header>
+
+					<v-pane-content>
+						<div ng-if="item.header == 'Save'">
+							<p>Party!</p>
+						</div>
+						<!-- Repeat over all drawables within the menu -->
+						<div ng-if="item.header == 'Drawables'">
+							<img ng-repeat="img in item.items" ng-src="/images/{{img.imgName}}.png" alt="{{img.imgName}}" style="width:50px;height:50px;">
+						</div>
+						
+						<!-- {{item.items}} -->
+					</v-pane-content>
+				</v-pane>
+
+
+			</v-accordion>
 		</div>
 	</div>
 	<!-- END Left sidebar -->
@@ -60,12 +89,16 @@
 			<div class="row">
 				<div class="input-group-btn">
 					<div class="col-md-3">
-						<drop-down-btn data-menu-type="button" select-val="selectedMenuItem = selectedVal" preselected-item="selectedMenuItem" data-dropdown-data="menuItems"></drop-down-btn>
+						<drop-down-btn data-menu-type="button" select-val="selectedDropdownItem = selectedVal" preselected-item="selectedDropdownItem" data-dropdown-data="searchDropdownItems"></drop-down-btn>
 					</div>
 
-					<div class="col-md-7">
+					<div class="col-md-1">
+
 						<!-- Add the loading gif in here!!
 						on click ng-show the gif -->
+						<img id="loadingImage" src="../images/loading.gif" ng-init="isLoadingImage = false" ng-show="isLoadingImage">
+					</div>
+					<div class="col-md-6">
 
 						<input type="text" class="form-control" aria-label="..." ng-model="searchInput">
 					</div>
@@ -76,10 +109,14 @@
 							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="glyphicon glyphicon-search"></span>
 							</button>
 							<ul class="dropdown-menu dropdown-menu-right" role="menu">
-								<li><a href="#">Search Network</a>
+								<li><a ng-click="searchChart()">Search Network</a>
 								</li>
 								<li class="divider"></li>
 								<li><a ng-click="renderNode()">Search Database</a>
+								</li>
+								<li class="divider"></li>
+								<!-- this needs to be removed, this is to just populate my chart completely -->
+								<li><a ng-click="testDataPopulate()">Populate - TEST</a>
 								</li>
 							</ul>
 						</div>

@@ -6,7 +6,7 @@ angular.module('graphAngularApp')
 		/************************************
 		 **		   Search Bar Config	   **
 		 ************************************/
-		$scope.menuItems = [{
+		$scope.searchDropdownItems = [{
 			id: 1,
 			name: 'All'
 		}, {
@@ -29,27 +29,114 @@ angular.module('graphAngularApp')
 			name: 'Event'
 		}];
 
-		$scope.selectedMenuItem = 1;
+		$scope.selectedDropdownItem = 1;
 
+		/************************************
+		 **		   Menu Config	   		**
+		 ************************************/
+		$scope.menuItems = [{
+			id: 1,
+			header: 'Open'
+		}, {
+			id: 2,
+			header: 'Save',
+			items: [
+				{
+					name: 'Save Chart'
+				},{
+					name: 'Save Chart AS'
+				}]
+		}, {
+			id: 3,
+			header: 'Drawables',
+			items: [
+				{
+					id: 1,
+					imgName: 'academic'
+				}, {
+					id: 2,
+					imgName: 'address'
+				}, {
+					id: 3,
+					imgName: 'airport'
+				}, {
+					id: 4,
+					imgName: 'car'
+				}, {
+					id: 5,
+					imgName: 'child'
+				}, {
+					id: 6,
+					imgName: 'coach'
+				}, {
+					id: 7,
+					imgName: 'company'
+				}, {
+					id: 8,
+					imgName: 'document'
+				}, {
+					id: 9,
+					imgName: 'email'
+				}, {
+					id: 10,
+					imgName: 'event'
+				}, {
+					id: 11,
+					imgName: 'father'
+				}, {
+					id: 12,
+					imgName: 'flight'
+				}, {
+					id: 13,
+					imgName: 'group'
+				}, {
+					id: 14,
+					imgName: 'id'
+				}, {
+					id: 15,
+					imgName: 'location'
+				}, {
+					id: 16,
+					imgName: 'man'
+				}, {
+					id: 17,
+					imgName: 'mobile'
+				}, {
+					id: 18,
+					imgName: 'mother'
+				}, {
+					id: 19,
+					imgName: 'passport'
+				}, {
+					id: 20,
+					imgName: 'pencil'
+				}, {
+					id: 21,
+					imgName: 'plane'
+				}, {
+					id: 22,
+					imgName: 'ship'
+				}, {
+					id: 23,
+					imgName: 'telephone'
+				}, {
+					id: 24,
+					imgName: 'unknown'
+				}, {
+					id: 25,
+					imgName: 'woman'
+				}
+			]
+		}];
 
-		var searchType = '';
-		var queryChoice = '';
-
-		// Variable to check if the chart has been loaded for the first time
-		var firstQuery = true;
-
-		var keylinesItems = [];
-
-		$scope.setVariables = function (id) {
-			searchType = id;
-			queryChoice = 'start';
-			console.log(searchType);
-			console.log(queryChoice);
-		};
+		/************************************
+		 **		   	   **
+		 ************************************/
 
 		/************************************
 		 **		   Slide Menu Config	   **
 		 ************************************/
+
 		$scope.snapOpts = {
 			// Disable touch to drag so users can highlight etc 
 			// on the page without pulling out the 
@@ -58,8 +145,14 @@ angular.module('graphAngularApp')
 
 
 		/************************************
-		 **		KeyLines Directive Config  **
+		 **		KeyLines Config			  **
 		 ************************************/
+
+		var keylinesItems = [];
+
+		// Variable to check if the chart has been loaded for the first time
+		var firstQuery = true;
+
 		// all keylines events are prefixed with kl and be captured like so:
 		$scope.$on('kl', function (event, eventName, componentId, componentType) {
 
@@ -105,6 +198,62 @@ angular.module('graphAngularApp')
 
 		/************************************
 		 **		KeyLines Render Nodes	   **
+		 **		Search the database btn	   **
+		 ************************************/
+		var watchingForSearchChart = $scope.$watch('searchInput', function (searchTerm) {
+			// Call itself to stop watching the input box and take 
+			// the last known value before 'search db' is clicked
+			//watchingSearch();
+
+			centreSelected(searchTerm);
+		});
+
+		$scope.searchChart = function () {
+			var watchingSearch = $scope.$watch('searchInput', function (searchTerm) {
+				// Call itself to stop watching the input box and take 
+				// the last known value before 'search db' is clicked
+				watchingSearch();
+
+				selectName(searchTerm);
+			});
+
+		};
+
+		function centreSelected(name) {
+			var selection = selectName(name);
+			if (selection) {
+				$scope.chart.pan('selection', {
+					animate: true,
+					time: 300
+				});
+				$scope.chart.ping(selection);
+			}
+		};
+
+		function selectName(name) {
+			// Regex for: label text starts with 'name' (ignoring case-sensitive)	
+			var searchRegex = new RegExp('^' + name, 'im');
+			// no name: clear the selection
+			if (!name) {
+				// For some reason this re
+				//$scope.chart.selection([]);
+				return;
+			}
+			var result = [];
+			// iterate over every node and test if it matches the name we are searching for
+			$scope.chart.each({
+				type: 'node'
+			}, function (item) {
+				if (searchRegex.test(item.t)) {
+					result.push(item.id);
+				}
+			});
+			return $scope.chart.selection(result);
+		};
+
+		/************************************
+		 **		KeyLines Render Nodes	   **
+		 **		Search the database btn	   **
 		 ************************************/
 		$scope.renderNode = function () {
 			var watchingSearch = $scope.$watch('searchInput', function (id) {
@@ -115,13 +264,14 @@ angular.module('graphAngularApp')
 					// the last known value before 'search db' is clicked
 					watchingSearch();
 
+					$scope.isLoadingImage = true;
 					// Call the node GET from the neo factory
 					neoFactory.getNode(id).then(function (json) {
 
 						// Create a node from the neo4j returned REST data - Return var node to createKeylinesNode
 						// Create a keylines version of the node and store the existing neo4j version as an attribute - Return var
 						// Push the keylines node onto the stack used for the chart
-						
+
 						createNode(json.data.metadata.id, json.data.metadata, json.data.data);
 
 					});
@@ -129,7 +279,6 @@ angular.module('graphAngularApp')
 			});
 
 		};
-
 
 		/************************************
 		 **	 	Create Node Object		   **
@@ -145,15 +294,15 @@ angular.module('graphAngularApp')
 			var relationships, node;
 			neoFactory.getRelationshipsOfNode(id)
 				.then(function (json) {
-					
-					relationships = calculateRels(json.data,metadata.id);
+
+					relationships = calculateRels(json.data, metadata.id);
 					node = {
-						'nodeId': nodeId,
-						'metadata': metadata,
-						'data': data,
-						'relationships': relationships
-					}
-					// Parse the node into the keylines format
+							'nodeId': nodeId,
+							'metadata': metadata,
+							'data': data,
+							'relationships': relationships
+						}
+						// Parse the node into the keylines format
 					createKeylinesNode(node);
 
 				});
@@ -188,8 +337,8 @@ angular.module('graphAngularApp')
 		 **	 chart						   **
 		 ************************************/
 		function createKeylinesNode(node) {
-			
-				console.log(node);
+
+			console.log(node);
 			// Keylines node
 			var keylinesNode = {
 				id: node.nodeId,
@@ -207,25 +356,28 @@ angular.module('graphAngularApp')
 				// save the neo4j item for more information
 				d: node
 			};
-			
+
 			keylinesItems.push(keylinesNode);
-			
+
 			if (!firstQuery) {
 				$scope.chart.expand(keylinesNode);
 
+				// stop showing the loading gif
+				$scope.isLoadingImage = false;
 			} else {
 				firstQuery = false;
-				
+
 				$scope.chart.load({
 					type: 'LinkChart',
 					items: keylinesItems
 				}, function () {
 					$scope.chart.layout('standard');
 					// stop showing the loading gif
+					$scope.isLoadingImage = false;
 				});
 			}
 
-			
+
 		}
 
 		/************************************
@@ -249,7 +401,7 @@ angular.module('graphAngularApp')
 					if (node.metadata.labels[i] === 'Person' || node.metadata.labels[i] === 'Object' || node.metadata.labels[i] === 'Location' || node.metadata.labels[i] === 'Event') {
 						// Do something around gender of person
 						if (node.metadata.labels[i] === 'Person') {
-//							console.log(node);
+							//							console.log(node);
 							icon = node.data.gender === 'F' ? 'images/woman.png' : 'images/man.png';;
 							//console.log(icon);
 							break;
@@ -286,5 +438,26 @@ angular.module('graphAngularApp')
 
 		/***********************************/
 
+		/************************************
+		 **		Populate Test Data to	   **
+		 **				chart			   **
+		 ************************************/
+		$scope.testDataPopulate = function () {
+			for (var i = 0; i < 8; i++) {
+				$scope.isLoadingImage = true;
+				// Call the node GET from the neo factory
+				neoFactory.getNode(i).then(function (json) {
+
+					// Create a node from the neo4j returned REST data - Return var node to createKeylinesNode
+					// Create a keylines version of the node and store the existing neo4j version as an attribute - Return var
+					// Push the keylines node onto the stack used for the chart
+
+					createNode(json.data.metadata.id, json.data.metadata, json.data.data);
+
+					$scope.chart.layout('structural');
+				});
+			}
+
+		};
 
 	});

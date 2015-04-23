@@ -99,7 +99,7 @@ angular.module('graphAngularApp')
 			// helper method to configure keylines from directive attributes
 			config: function (base) {
 				KeyLines.paths({
-					assets: base + '../../assets/',
+					assets: base + 'assets/',
 					flash: {
 						swf: base + 'swf/keylines.swf',
 						swfObject: base + 'js/swfobject.js',
