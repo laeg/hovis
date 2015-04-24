@@ -32,7 +32,7 @@ angular.module('graphAngularApp')
 		$scope.selectedDropdownItem = 1;
 
 		/************************************
-		 **		   Menu Config	   		**
+		 **			Left Menu Config	   **
 		 ************************************/
 		$scope.menuItems = [{
 			id: 1,
@@ -43,7 +43,7 @@ angular.module('graphAngularApp')
 			items: [
 				{
 					name: 'Save Chart'
-				},{
+				}, {
 					name: 'Save Chart AS'
 				}]
 		}, {
@@ -149,6 +149,7 @@ angular.module('graphAngularApp')
 		 ************************************/
 
 		var keylinesItems = [];
+		//var keylinesRelationships = [];
 
 		// Variable to check if the chart has been loaded for the first time
 		var firstQuery = true;
@@ -302,9 +303,11 @@ angular.module('graphAngularApp')
 							'data': data,
 							'relationships': relationships
 						}
+					
+					
 						// Parse the node into the keylines format
 					createKeylinesNode(node);
-
+					//console.log(JSON.stringify(relationships.original));
 				});
 
 		}
@@ -338,7 +341,7 @@ angular.module('graphAngularApp')
 		 ************************************/
 		function createKeylinesNode(node) {
 
-			console.log(node);
+			//console.log(node);
 			// Keylines node
 			var keylinesNode = {
 				id: node.nodeId,
@@ -357,10 +360,17 @@ angular.module('graphAngularApp')
 				d: node
 			};
 
+			//var items = [];
 			keylinesItems.push(keylinesNode);
+			keylinesItems = keylinesItems.concat(createKeylinesRelationships(node.relationships.original));
+			
+			//console.log(keylinesItems);
 
 			if (!firstQuery) {
-				$scope.chart.expand(keylinesNode);
+				// expand(items, options, callback)
+				$scope.chart.expand(keylinesItems, {fit: true}, function(){
+					$scope.chart.layout('standard');
+				});
 
 				// stop showing the loading gif
 				$scope.isLoadingImage = false;
@@ -381,6 +391,45 @@ angular.module('graphAngularApp')
 		}
 
 		/************************************
+		 **	 KeyLines Create Relationship  **
+		 ************************************
+		 [{"start":"http://localhost:7474/db/data/node/5","data":{},"property":"http://localhost:7474/db/data/relationship/0/properties/{key}","self":"http://localhost:7474/db/data/relationship/0","properties":"http://localhost:7474/db/data/relationship/0/properties","type":"FRIENDS","extensions":{},"end":"http://localhost:7474/db/data/node/2","metadata":{"id":0,"type":"FRIENDS"}},{"start":"http://localhost:7474/db/data/node/1","data":{},"property":"http://localhost:7474/db/data/relationship/2/properties/{key}","self":"http://localhost:7474/db/data/relationship/2","properties":"http://localhost:7474/db/data/relationship/2/properties","type":"BFF4EVZ","extensions":{},"end":"http://localhost:7474/db/data/node/2","metadata":{"id":2,"type":"BFF4EVZ"}},{"start":"http://localhost:7474/db/data/node/7","data":{},"property":"http://localhost:7474/db/data/relationship/3/properties/{key}","self":"http://localhost:7474/db/data/relationship/3","properties":"http://localhost:7474/db/data/relationship/3/properties","type":"DRIVINGBUDDIES","extensions":{},"end":"http://localhost:7474/db/data/node/2","metadata":{"id":3,"type":"DRIVINGBUDDIES"}},{"start":"http://localhost:7474/db/data/node/2","data":{},"property":"http://localhost:7474/db/data/relationship/4/properties/{key}","self":"http://localhost:7474/db/data/relationship/4","properties":"http://localhost:7474/db/data/relationship/4/properties","type":"EATS","extensions":{},"end":"http://localhost:7474/db/data/node/6","metadata":{"id":4,"type":"EATS"}}]
+		 ************************************/
+
+
+		function createKeylinesRelationships(relationshipArray) {
+			// Loop throught the array
+			for (var i = 0; i < relationshipArray.length; i++) {
+				//console.log(relationshipArray[i]);
+				// Get the start and end variables
+				var id1 = cleanURL(relationshipArray[i].start),
+					id2 = cleanURL(relationshipArray[i].end);
+
+				// Create a link 
+				// Push onto the Keylines Relationships Array
+				var link = {
+					type: 'link',
+					id1: id1,
+					id2: id2,
+					id: id1 + '-' + id2,
+					t: relationshipArray[i].type,
+					fc: 'rgba(52,52,52,0.9)',
+					// draw an arrow
+					a2: true,
+					c: 'rgb(0,153,255)',
+					w: 2,
+					// glyph
+					//g: getGlyph(item),
+					// save the item for future use
+					d: relationshipArray[i]
+				}
+				//console.log(link);
+				//keylinesItems.push(link);
+				return link;
+			} 
+		}
+
+		/************************************
 		 **	 KeyLines Get Node Icon   **
 		 ************************************
 		 **	 Function to find out what the **
@@ -396,7 +445,7 @@ angular.module('graphAngularApp')
 
 			// Check that the icon array is < 
 			if (node.metadata.labels.length > 1) {
-				console.log(node.metadata.labels);
+				//console.log(node.metadata.labels);
 				for (var i = 0; i < node.metadata.labels.length; i++) {
 					if (node.metadata.labels[i] === 'Person' || node.metadata.labels[i] === 'Object' || node.metadata.labels[i] === 'Location' || node.metadata.labels[i] === 'Event') {
 						// Do something around gender of person
@@ -409,7 +458,7 @@ angular.module('graphAngularApp')
 						//else if (){} 
 						else {
 							icon = 'images/' + node.metadata.labels[i].toLowerCase() + '.png';
-							console.log(icon);
+							//console.log(icon);
 							break;
 						}
 					}
@@ -418,7 +467,7 @@ angular.module('graphAngularApp')
 				// Dont forget to get the file type? 
 				// Could do something sensible around this!
 				icon = 'images/' + node.metadata.labels[0].toLowerCase() + '.png';
-				console.log(icon);
+				//console.log(icon);
 				//break;
 			}
 
@@ -430,6 +479,13 @@ angular.module('graphAngularApp')
 		 **	  KeyLines Parse Results	   **
 		 ************************************/
 
+
+		/************************************
+		 **	  			Clean URLs		   **
+		 ************************************/
+		function cleanURL(url) {
+			return url.substring(url.lastIndexOf('/') + 1);
+		}
 
 		/************************************
 		 **			KeyLines Nodes		   **

@@ -3,10 +3,13 @@
 }
 
 .container {
-	padding-left: 100px;
-	padding-right: 100px;
+	/**padding-left: 100px;
+	padding-right: 100px;*/
 	height: 100%;
 	width: 100%;
+	
+	overflow-x:hidden;
+	overflow-y:hidden;
 }
 
 snap-content {
@@ -17,12 +20,20 @@ snap-content {
 	border-right: 1px solid #999;
 }
 
+/** 
+	border-left: 1px solid #999;
+	border-right: 1px solid #999; */
+
 #expandButton {
 	right:0px;
 }
 
 /* Need to do something clever here */
 #chartId{
-	width:650px; 
-	height:430px;
+	width:inherit; 
+	height:500px;
+}
+
+#menuLeft{
+	overflow-x:hidden;
 }

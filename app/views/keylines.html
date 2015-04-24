@@ -2,7 +2,7 @@
 
 
 	<!-- Left sidebar -->
-	<div snap-drawer="left">
+	<div id="menuLeft" snap-drawer="left">
 
 		<div class="row">
 			<div class="panel">
@@ -26,14 +26,17 @@
 			<v-accordion class="vAccordion--default col-md-12">
 
 				<!-- add expanded attribute to open the section -->
-				<v-pane ng-repeat="item in menuItems | filter : { headers : '!!'}" expanded="$first">
+				<v-pane ng-repeat="item in menuItems" expanded="$first">
 					<v-pane-header>
 						{{item.header}}
 					</v-pane-header>
 
 					<v-pane-content>
+						<div ng-if="item.header == 'Open'">
+							<p>What are we finding, gov?!</p>
+						</div>
 						<div ng-if="item.header == 'Save'">
-							<p>Party!</p>
+							<p>Party with the boys!</p>
 						</div>
 						<!-- Repeat over all drawables within the menu -->
 						<div ng-if="item.header == 'Drawables'">
