@@ -196,6 +196,10 @@ angular.module('graphAngularApp')
 			$scope.chart.selection([]);
 		};
 
+		$scope.standardLayout = function () {
+			$scope.chart.layout('standard', {fit: true, animate: true, tidy: true});
+		};
+
 
 		/************************************
 		 **		KeyLines Render Nodes	   **
@@ -298,14 +302,14 @@ angular.module('graphAngularApp')
 
 					relationships = calculateRels(json.data, metadata.id);
 					node = {
-							'nodeId': nodeId,
-							'metadata': metadata,
-							'data': data,
-							'relationships': relationships
-						}
-					
-					
-						// Parse the node into the keylines format
+						'nodeId': nodeId,
+						'metadata': metadata,
+						'data': data,
+						'relationships': relationships
+					}
+
+
+					// Parse the node into the keylines format
 					createKeylinesNode(node);
 					//console.log(JSON.stringify(relationships.original));
 				});
@@ -319,15 +323,15 @@ angular.module('graphAngularApp')
 				relationships;
 			for (var i = 0; i < json.length; i++) {
 				if (String(json[i].end.slice(-1)) !== String(nodeId)) {
-					inCount++;
-				} else {
 					outCount++;
+				} else {
+					inCount++;
 				}
 			}
 			relationships = {
 				'inCount': inCount,
 				'outCount': outCount,
-				'original': original
+				'original': json
 			};
 			return relationships;
 		}
@@ -342,12 +346,13 @@ angular.module('graphAngularApp')
 		function createKeylinesNode(node) {
 
 			//console.log(node);
+
 			// Keylines node
 			var keylinesNode = {
 				id: node.nodeId,
 				type: 'node',
 				// get the label based on type and content
-				t: node.metadata.labels[0] + '\n' + 'Bobby Son!',
+				t: node.metadata.labels[0] + '\n' + node.data.name,
 				// get the icon based on the labels
 				u: getNodeType(node),
 				// cut out circle from original image?
@@ -355,7 +360,7 @@ angular.module('graphAngularApp')
 				// determine the size of the node
 				// e: {:INTEGER}
 				// add a glyph if the node needs one
-				g: '',
+				g: getGlyphs(node.relationships),
 				// save the neo4j item for more information
 				d: node
 			};
@@ -363,13 +368,15 @@ angular.module('graphAngularApp')
 			//var items = [];
 			keylinesItems.push(keylinesNode);
 			keylinesItems = keylinesItems.concat(createKeylinesRelationships(node.relationships.original));
-			
-			//console.log(keylinesItems);
+
+			console.log(keylinesItems);
 
 			if (!firstQuery) {
 				// expand(items, options, callback)
-				$scope.chart.expand(keylinesItems, {fit: true}, function(){
-					$scope.chart.layout('standard');
+				$scope.chart.expand(keylinesItems, {
+					fit: true
+				}, function () {
+					$scope.chart.layout('standard', {fit: true, animate: true, tidy: true});
 				});
 
 				// stop showing the loading gif
@@ -381,13 +388,41 @@ angular.module('graphAngularApp')
 					type: 'LinkChart',
 					items: keylinesItems
 				}, function () {
-					$scope.chart.layout('standard');
+					$scope.chart.layout('standard', {fit: true, animate: true, tidy: true});
 					// stop showing the loading gif
 					$scope.isLoadingImage = false;
 				});
 			}
 
+		}
 
+		/************************************
+		 **	 KeyLines Create Relationship  **
+		 ***********************************/
+		function getGlyphs(relationships) {
+			var glyphArray = [];
+
+			glyphArray.push({
+				c: 'rgb(255,0,0)',
+				p: 'ne',
+				t: 'in'
+			}, {
+				c: 'rgb(0,0,205)',
+				p: 'nw',
+				t: 'out'
+			}, {
+				c: 'rgb(255,0,0)',
+				p: 'se',
+				t: relationships.inCount
+			}, {
+				c: 'rgb(0,0,205)',
+				p: 'sw',
+				t: relationships.outCount
+			});
+
+
+			//console.log(glyphArray)
+			return glyphArray;
 		}
 
 		/************************************
@@ -408,26 +443,27 @@ angular.module('graphAngularApp')
 				// Create a link 
 				// Push onto the Keylines Relationships Array
 				var link = {
-					type: 'link',
-					id1: id1,
-					id2: id2,
-					id: id1 + '-' + id2,
-					t: relationshipArray[i].type,
-					fc: 'rgba(52,52,52,0.9)',
-					// draw an arrow
-					a2: true,
-					c: 'rgb(0,153,255)',
-					w: 2,
-					// glyph
-					//g: getGlyph(item),
-					// save the item for future use
-					d: relationshipArray[i]
-				}
-				//console.log(link);
-				//keylinesItems.push(link);
+						type: 'link',
+						id1: id1,
+						id2: id2,
+						id: id1 + '-' + id2,
+						t: relationshipArray[i].type,
+						fc: 'rgba(52,52,52,0.9)',
+						// draw an arrow
+						a2: true,
+						c: 'rgb(0,153,255)',
+						w: 2,
+						// glyph
+						//g: getGlyphs(item),
+						// save the item for future use
+						d: relationshipArray[i]
+					}
+					//console.log(link);
+					//keylinesItems.push(link);
 				return link;
-			} 
+			}
 		}
+
 
 		/************************************
 		 **	 KeyLines Get Node Icon   **
@@ -476,23 +512,89 @@ angular.module('graphAngularApp')
 		}
 
 		/************************************
-		 **	  KeyLines Parse Results	   **
-		 ************************************/
-
-
-		/************************************
 		 **	  			Clean URLs		   **
+		/************************************
+		 **  Cleans urls to return the ID  **
 		 ************************************/
 		function cleanURL(url) {
 			return url.substring(url.lastIndexOf('/') + 1);
 		}
 
+
 		/************************************
-		 **			KeyLines Nodes		   **
+		 **			Save Chart Config	   **
 		 ************************************/
+		// Count how many charts have been saved
+		var counter = 1;
+		// Object to store all the serialised objects
+		// This could then be a AJAX call to put into a database
+		$scope.chartStore = {};
+		// 
+		var hasLoaded = true;
+
+		$scope.saveChart = function (evt) {
+
+			var canSave = true // this should check if the button is disabled
+
+			if (canSave) {
+				// Serialise the current chart
+				var chartState = $scope.chart.serialize();
+
+				// Save a small image thumbnail of the chart
+				var chartImage = $scope.chart.toDataURL(630, 470, {
+					noScale: false,
+					selection: true,
+					fit: 'exact'
+				});
+
+				// Set the name for the chart
+				// this could be the user name instead of just chart
+				var chartName = 'Chart ' + counter + ' - Saved @ ' + getTime();
+				counter++;
+
+				// Save the chart
+				// Serialising the chart to local storage 
+				// but can send via AJAX
+				$scope.chartStore[chartName] = {
+					'chartSessionId': counter,
+					'chartName': chartName,
+					'chartState': chartState,
+					'chartImage': chartImage
+				};
+
+			}
+
+		}
 
 
-		/***********************************/
+		function getTime() {
+			var now = new Date();
+			var h = now.getHours();
+			var m = now.getMinutes();
+			var s = now.getSeconds();
+
+			return h + (m < 10 ? ":0" : ":") + m + (s < 10 ? ":0" : ":") + s;
+		}
+
+		// Function to restore the graph
+		$scope.restoreChart = function (chartName) {
+			// disable the button 
+			//	
+
+			var previousSave = $scope.chartStore[chartName];
+
+			// Set the restore flag to false
+			//hasLoaded = false;
+
+			// Restore the data
+			$scope.chart.load(previousSave.chartState, function () {
+				// From now on capture events
+				hasLoaded = true
+			});
+
+		}
+
+		/***********************************************************************************************************************************/
 
 		/************************************
 		 **		Populate Test Data to	   **

@@ -35,14 +35,25 @@
 						<div ng-if="item.header == 'Open'">
 							<p>What are we finding, gov?!</p>
 						</div>
-						<div ng-if="item.header == 'Save'">
-							<p>Party with the boys!</p>
+						<div ng-if="item.header == 'Save'" style="min-height:250px;max-height:250px;overflow-y: scroll;
+	overflow-x:hidden;">
+							<div class="row">
+								<button class="btn btn-small col-md-12" ng-click="saveChart()">Save Chart</button>
+							</div>
+
+							<legend>Recently Saved</legend>
+							<div ng-repeat="img in chartStore | orderBy : img.chartSessionId : true | limitTo : 5">
+								<a ng-click="restoreChart(img.chartName)">
+									<img class="text-center" ng-src="{{img.chartImage}}" alt="{{img.chartName}}" style="width:200px;height:100px;">
+									<p class="text-center">{{img.chartName}}</p>
+								</a>
+							</div>
 						</div>
 						<!-- Repeat over all drawables within the menu -->
 						<div ng-if="item.header == 'Drawables'">
 							<img ng-repeat="img in item.items" ng-src="/images/{{img.imgName}}.png" alt="{{img.imgName}}" style="width:50px;height:50px;">
 						</div>
-						
+
 						<!-- {{item.items}} -->
 					</v-pane-content>
 				</v-pane>
@@ -91,7 +102,7 @@
 			<!-- Menu Items -->
 			<div class="row">
 				<div class="input-group-btn">
-					<div class="col-md-3">
+					<div class="col-md-2">
 						<drop-down-btn data-menu-type="button" select-val="selectedDropdownItem = selectedVal" preselected-item="selectedDropdownItem" data-dropdown-data="searchDropdownItems"></drop-down-btn>
 					</div>
 
@@ -102,14 +113,32 @@
 						<img id="loadingImage" src="../images/loading.gif" ng-init="isLoadingImage = false" ng-show="isLoadingImage">
 					</div>
 					<div class="col-md-6">
-
 						<input type="text" class="form-control" aria-label="..." ng-model="searchInput">
 					</div>
 
-					<div class="col-md-2">
+					<div class="col-md-1">
 						<div>
 							<!--<button class="btn btn-small" ng-click="searchInput = ''">Clear</button>-->
 							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="glyphicon glyphicon-search"></span>
+							</button>
+							<ul class="dropdown-menu dropdown-menu-right" role="menu">
+								<li><a ng-click="searchChart()">Search Network</a>
+								</li>
+								<li class="divider"></li>
+								<li><a ng-click="renderNode()">Search Database</a>
+								</li>
+								<li class="divider"></li>
+								<!-- this needs to be removed, this is to just populate my chart completely -->
+								<li><a ng-click="testDataPopulate()">Populate - TEST</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					
+					<div class="col-md-1 pull-right">
+						<div>
+							<!--<button class="btn btn-small" ng-click="searchInput = ''">Clear</button>-->
+							<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="glyphicon glyphicon-wrench"></span>
 							</button>
 							<ul class="dropdown-menu dropdown-menu-right" role="menu">
 								<li><a ng-click="searchChart()">Search Network</a>

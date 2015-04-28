@@ -16,8 +16,6 @@ snap-content {
 	height: 100%;
 	width: 100%;
 	background-color: #FFF;
-	border-left: 1px solid #999;
-	border-right: 1px solid #999;
 }
 
 /** 
@@ -36,4 +34,5 @@ snap-content {
 
 #menuLeft{
 	overflow-x:hidden;
+	overflow-y:hidden;
 }

@@ -9,12 +9,6 @@
 	bottom:0px;
 	height:30px;
 	width:100%;
+	background-color: blueviolet;
 }
-
-/* Need to do something clever here */
-#chartId{
-	width:650px; 
-	height:430px;
-}
-
 
