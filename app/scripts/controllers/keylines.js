@@ -1,7 +1,22 @@
 'use strict';
 
 angular.module('graphAngularApp')
-	.controller('KeylinesCtrl', function ($scope, neoFactory) {
+	.controller('KeylinesCtrl', function ($scope, $timeout, neoFactory) {
+
+
+		/************************************
+		 **		   Login Modal Config	   **
+		 ************************************/
+		$scope.showLoginModal = true;
+
+		// Need to make sure that modal has input before it can be closed
+
+		/************************************
+		 **		   Context Menu Config	   **
+		 ************************************/
+		$scope.showContextMenu = false;
+
+		// Need to make sure that modal has input before it can be closed
 
 		/************************************
 		 **		   Search Bar Config	   **
@@ -130,7 +145,7 @@ angular.module('graphAngularApp')
 		}];
 
 		/************************************
-		 **		   	   **
+		 **		   	  					   **
 		 ************************************/
 
 		/************************************
@@ -149,7 +164,7 @@ angular.module('graphAngularApp')
 		 ************************************/
 
 		var keylinesItems = [];
-		//var keylinesRelationships = [];
+		var keylineLastClickedItemId;
 
 		// Variable to check if the chart has been loaded for the first time
 		var firstQuery = true;
@@ -159,8 +174,46 @@ angular.module('graphAngularApp')
 
 		});
 
-		// example event to listen for
+		/************************************
+		 **		KeyLines On Click		   **
+		 ************************************
+		 **	 On click if it's a node it	   **
+		 **	 it will change the glyphs to  **
+		 **	 the count of relationships    **
+		 ************************************/
 		$scope.$on('kl:click', function (event, componentId, type, id, x, y, button, sub) {
+			console.log(type);
+			var clickedItem = $scope.chart.getItem(id);
+			var oldGlyphs = [];
+
+			// If the item already has glyphs, hold them in memory
+			// Needs error handling here
+			if (clickedItem.g !== undefined) {
+				oldGlyphs = clickedItem.g;
+			} else {
+				console.log('No glyphs');
+			}
+
+			if (id && clickedItem.type === 'node') {
+				keylineLastClickedItemId = id;
+				$scope.chart.setProperties({
+					id: id,
+					g: getGlyphs(clickedItem.d.relationships)
+				});
+			}
+
+			// Set time out before glyphs revert to old versions
+			$timeout(function (oldGlyphs) {
+				$scope.chart.setProperties({
+					id: keylineLastClickedItemId,
+					g: oldGlyphs
+				});
+			}, 1000);
+
+		});
+
+		// example event to listen for hover
+		$scope.$on('kl:hover', function (event, componentId, type, id, x, y, button, sub) {
 
 		});
 
@@ -174,15 +227,13 @@ angular.module('graphAngularApp')
 			//});
 		});
 
-		//$scope.selected = [];
-
 		//changing options on the scope will set them on the KeyLines chart itself
 		$scope.options = {
 			backColour: 'white',
 			overview: false,
 			controlColour: 'grey',
 			selectionColour: '#24F',
-			logo: 'assets/homeoffice.png'
+			logo: 'assets/bread.png'
 		};
 
 		$scope.zoom = function (type) {
@@ -196,10 +247,88 @@ angular.module('graphAngularApp')
 			$scope.chart.selection([]);
 		};
 
+
+		/************************************
+		 **		KeyLines Layouts	   	   **
+		 ************************************/
 		$scope.standardLayout = function () {
-			$scope.chart.layout('standard', {fit: true, animate: true, tidy: true});
+			$scope.chart.layout('standard', {
+				fit: true,
+				animate: true,
+				tidy: true
+			});
 		};
 
+		$scope.structuralLayout = function () {
+			$scope.chart.layout('structural', {
+				fit: true,
+				animate: true,
+				tidy: true,
+				top: $scope.chart.selection()
+			});
+		};
+
+		$scope.hierarchyLayout = function () {
+			$scope.chart.layout('hierarchy', {
+				fit: true,
+				animate: true,
+				tidy: true,
+				top: $scope.chart.selection()
+			});
+		};
+
+		$scope.radialLayout = function () {
+			$scope.chart.layout('radial', {
+				fit: true,
+				animate: true,
+				tidy: true,
+				top: $scope.chart.selection()
+			});
+		};
+
+		/************************************
+		 **		KeyLines Node Options	   **
+		 ************************************/
+
+		/************************************
+		 **		KeyLines On Click		   **
+		 ************************************
+		 **	 On click if it's a node it	   **
+		 **	 it will change the glyphs to  **
+		 **	 the count of relationships    **
+		 ************************************/
+		$scope.$on('kl:contextmenu', function (event, componentId, type, id, x, y, button, sub) {
+			var menu = angular.element("#contextMenu");
+			//alert('Whoa!');
+			//$scope.showContextMenu = true;
+			if (id) {
+				console.log(id);
+				var item = $scope.chart.getItem(id);
+
+				if (item.type === 'node') {
+					console.log(item.type);
+					var offset = angular.element('#chartId').offset(); //$scope.chart.offset();
+
+					console.log(offset);
+					offset.left += x + 20;
+					offset.top += y - 100;
+
+					menu.css('left', offset.left).css('top', offset.top);
+
+					$timeout(function () {
+						menu.fadeIn('fast');
+					}, 70);
+					
+					//return;
+				}
+			}
+
+			$timeout(function () {
+				//if (menu.is(':visible')){
+					menu.fadeOut('fast');
+				//}
+			}, 3000);
+		});
 
 		/************************************
 		 **		KeyLines Render Nodes	   **
@@ -276,7 +405,6 @@ angular.module('graphAngularApp')
 						// Create a node from the neo4j returned REST data - Return var node to createKeylinesNode
 						// Create a keylines version of the node and store the existing neo4j version as an attribute - Return var
 						// Push the keylines node onto the stack used for the chart
-
 						createNode(json.data.metadata.id, json.data.metadata, json.data.data);
 
 					});
@@ -360,7 +488,7 @@ angular.module('graphAngularApp')
 				// determine the size of the node
 				// e: {:INTEGER}
 				// add a glyph if the node needs one
-				g: getGlyphs(node.relationships),
+				//g: getGlyphs(node.relationships),
 				// save the neo4j item for more information
 				d: node
 			};
@@ -369,14 +497,16 @@ angular.module('graphAngularApp')
 			keylinesItems.push(keylinesNode);
 			keylinesItems = keylinesItems.concat(createKeylinesRelationships(node.relationships.original));
 
-			console.log(keylinesItems);
-
 			if (!firstQuery) {
 				// expand(items, options, callback)
 				$scope.chart.expand(keylinesItems, {
 					fit: true
 				}, function () {
-					$scope.chart.layout('standard', {fit: true, animate: true, tidy: true});
+					$scope.chart.layout('standard', {
+						fit: true,
+						animate: true,
+						tidy: true
+					});
 				});
 
 				// stop showing the loading gif
@@ -388,7 +518,11 @@ angular.module('graphAngularApp')
 					type: 'LinkChart',
 					items: keylinesItems
 				}, function () {
-					$scope.chart.layout('standard', {fit: true, animate: true, tidy: true});
+					$scope.chart.layout('standard', {
+						fit: true,
+						animate: true,
+						tidy: true
+					});
 					// stop showing the loading gif
 					$scope.isLoadingImage = false;
 				});
@@ -403,19 +537,19 @@ angular.module('graphAngularApp')
 			var glyphArray = [];
 
 			glyphArray.push({
-				c: 'rgb(255,0,0)',
+				c: 'rgb(204,0,204)',
 				p: 'ne',
 				t: 'in'
 			}, {
-				c: 'rgb(0,0,205)',
+				c: 'rgb(204,0,204)',
 				p: 'nw',
 				t: 'out'
 			}, {
-				c: 'rgb(255,0,0)',
+				c: 'rgb(204,0,204)',
 				p: 'se',
 				t: relationships.inCount
 			}, {
-				c: 'rgb(0,0,205)',
+				c: 'rgb(204,0,204)',
 				p: 'sw',
 				t: relationships.outCount
 			});
@@ -529,6 +663,9 @@ angular.module('graphAngularApp')
 		// Object to store all the serialised objects
 		// This could then be a AJAX call to put into a database
 		$scope.chartStore = {};
+
+		// input for chart name
+		$scope.chartName;
 		// 
 		var hasLoaded = true;
 
@@ -549,7 +686,8 @@ angular.module('graphAngularApp')
 
 				// Set the name for the chart
 				// this could be the user name instead of just chart
-				var chartName = 'Chart ' + counter + ' - Saved @ ' + getTime();
+				var chartTime = getTime();
+				var chartName = 'Chart ' + counter;
 				counter++;
 
 				// Save the chart
@@ -557,16 +695,19 @@ angular.module('graphAngularApp')
 				// but can send via AJAX
 				$scope.chartStore[chartName] = {
 					'chartSessionId': counter,
+					'chartTime': chartTime,
 					'chartName': chartName,
 					'chartState': chartState,
 					'chartImage': chartImage
 				};
 
+				console.log($scope.chartStore);
 			}
-
 		}
 
-
+		/*************************
+		 **	Create a time stamp **
+		 *************************/
 		function getTime() {
 			var now = new Date();
 			var h = now.getHours();
@@ -576,12 +717,15 @@ angular.module('graphAngularApp')
 			return h + (m < 10 ? ":0" : ":") + m + (s < 10 ? ":0" : ":") + s;
 		}
 
-		// Function to restore the graph
+		/***********************************
+		 **	Function to restore the graph **
+		 ***********************************/
 		$scope.restoreChart = function (chartName) {
 			// disable the button 
 			//	
 
 			var previousSave = $scope.chartStore[chartName];
+			console.log(previousSave);
 
 			// Set the restore flag to false
 			//hasLoaded = false;
